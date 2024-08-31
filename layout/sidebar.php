@@ -14,5 +14,5 @@
     <button id="logout-btn" class="btn btn-danger">Logout</button>
     <br>
     <p style="text-align: center; font-size: 12px; margin-top: 10px;">Copyright © 2024 BAYU</p>
-    <p style="text-align: center; font-size: 12px; margin-top: 10px;">Version 24.08.15</p>
+    <p style="text-align: center; font-size: 12px; margin-top: 10px;">Version 24.08.30</p>
 </div>

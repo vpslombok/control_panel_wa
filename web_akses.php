@@ -5,10 +5,10 @@ include 'db.php';
 $query = "SELECT id, ip, latitude, longitude, location FROM user_access";
 $result = $conn->query($query);
 
-// hapus data yang dipilih
+// hapus data secara cepat menggunakan checkbox
 if (isset($_POST['hapus'])) {
-    $id = $_POST['checked'];
-    foreach ($id as $id) {
+    $checked = $_POST['checked'];
+    foreach ($checked as $id) {
         $query = "DELETE FROM user_access WHERE id = '$id'";
         $conn->query($query);
     }
@@ -25,6 +25,7 @@ if (isset($_POST['hapus'])) {
         <h2>Data Akses Pengguna</h2>
         <div class="table-responsive">
             <form action="web_akses.php" method="post">
+            <button type="submit" name="hapus" class="btn btn-primary" onclick="return validateSelection()">Hapus yang Dipilih</button>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -58,7 +59,7 @@ if (isset($_POST['hapus'])) {
                         ?>
                     </tbody>
                 </table>
-                <button type="submit" name="hapus" class="btn btn-primary">Hapus yang Dipilih</button>
+                
             </form>
         </div>
     </div>
@@ -66,10 +67,22 @@ if (isset($_POST['hapus'])) {
 
 </body>
 <script>
-    $(document).ready(function() {
-        $('#selectAll').click(function() {
-            $('input[name="checked[]"]').prop('checked', this.checked);
-        });
+    // Tambahkan event listener untuk select all checkbox dan tambahkan alert jika tidak ada data yang terpilih
+    document.getElementById("selectAll").addEventListener("click", function() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        if (this.checked) {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        } else {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+        // Tambahkan alert jika tidak ada data yang terpilih
+        if (!document.querySelector('input[type="checkbox"]:checked')) {
+            alert("Tidak ada data yang terpilih.");
+        }
     });
 
 

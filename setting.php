@@ -1,18 +1,6 @@
 <?php
+session_start();
 include 'db.php';
-
-if (isset($_POST['web-url-input'])) {
-  $webUrl = $_POST['web-url-input'];
-  if (!empty($webUrl)) {
-    $query = "UPDATE webhook_urls SET web_url='$webUrl', updated_at=NOW() ORDER BY updated_at DESC LIMIT 1";
-    if ($conn->query($query) === TRUE) {
-    } else {
-      echo "Error updating web URL: " . $conn->error;
-    }
-  } else {
-    echo "URL tidak valid.";
-  }
-}
 
 // Ambil URL API dari database
 $query = "SELECT web_url FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
@@ -22,6 +10,80 @@ $apiUrl = "";
 if ($result && $result->num_rows > 0) {
   $row = $result->fetch_assoc();
   $apiUrl = $row['web_url'];
+}
+
+// Ambil URL API dari database
+$query = "SELECT url FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
+$result = $conn->query($query);
+
+$url = "";
+if ($result && $result->num_rows > 0) {
+  $row = $result->fetch_assoc();
+  $url = $row['url'];
+}
+
+// Ambil URL API dari database
+$query = "SELECT url_api FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
+$result = $conn->query($query);
+
+$url_api = "";
+if ($result && $result->num_rows > 0) {
+  $row = $result->fetch_assoc();
+  $url_api = $row['url_api'];
+}
+
+
+if (isset($_POST['web-url-input']) && !isset($_POST['reload'])) {
+  $webUrl = $_POST['web-url-input'];
+  if (empty($webUrl)) {
+    $_SESSION['message'] = 'URL harus diisi.';
+  } else {
+    $query = "UPDATE webhook_urls SET web_url='$webUrl', updated_at=NOW() ORDER BY updated_at DESC LIMIT 1";
+    if ($conn->query($query) === TRUE) {
+      // Mengatur session flash message untuk memberi tahu pengguna bahwa operasi berhasil
+      $_SESSION['message'] = 'URL web berhasil diperbarui.';
+    } else {
+      // Mengatur session flash message untuk memberi tahu pengguna bahwa operasi gagal
+      $_SESSION['message'] = 'Gagal memperbarui URL web: ' . $conn->error;
+    }
+  }
+
+  // Redirect untuk mencegah resubmission data saat reload halaman
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit;
+}
+
+// Menampilkan pesan setelah redirect
+if (isset($_SESSION['message'])) {
+  echo "<script>alert('" . $_SESSION['message'] . "');</script>";
+  unset($_SESSION['message']);
+}
+
+
+if (isset($_POST['api-url-input']) && !isset($_POST['reload'])) {
+  $url_api = $_POST['api-url-input'];
+  if (empty($url_api)) {
+    $_SESSION['message'] = 'URL harus diisi.';
+  } else {
+    $query = "UPDATE webhook_urls SET url_api='$url_api', updated_at=NOW() ORDER BY updated_at DESC LIMIT 1";
+    if ($conn->query($query) === TRUE) {
+      // Mengatur session flash message untuk memberi tahu pengguna bahwa operasi berhasil
+      $_SESSION['message'] = 'URL berhasil diperbarui.';
+    } else {
+      // Mengatur session flash message untuk memberi tahu pengguna bahwa operasi gagal
+      $_SESSION['message'] = 'Gagal memperbarui URL web: ' . $conn->error;
+    }
+  }
+
+  // Redirect untuk mencegah resubmission data saat reload halaman
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit;
+}
+
+// Menampilkan pesan setelah redirect
+if (isset($_SESSION['message'])) {
+  echo "<script>alert('" . $_SESSION['message'] . "');</script>";
+  unset($_SESSION['message']);
 }
 
 ?>
@@ -37,7 +99,8 @@ if ($result && $result->num_rows > 0) {
       type="url"
       id="webhook-url-input"
       placeholder="Enter new webhook URL"
-      class="form-control" style="margin-top: 10px;"/>
+      value="<?php echo $url; ?>"
+      class="form-control" style="margin-top: 10px;" />
     <button id="update-webhook-url-btn" class="btn btn-primary" style="margin-top: 10px;">
       Update URL
     </button>
@@ -46,15 +109,32 @@ if ($result && $result->num_rows > 0) {
 
 <div class="content">
   <div class="form web">
-    <h1>Perbarui Link Website</h1>
+    <h1>Link Server Nodejs</h1>
     <form method="POST" action="setting.php">
       <input
         type="url"
         name="web-url-input"
         id="web-url-input"
         placeholder="Masukkan URL web baru"
-        class="form-control" style="margin-top: 10px;"/>
+        value="<?php echo $apiUrl; ?>"
+        class="form-control" style="margin-top: 10px;" />
       <button type="submit" id="update-web-url-btn" class="btn btn-danger" style="margin-top: 10px;">Perbarui</button>
+    </form>
+  </div>
+</div>
+
+<div class="content">
+  <div class="form web">
+    <h1>Link URL API</h1>
+    <form method="POST" action="setting.php">
+      <input
+        type="url"
+        name="api-url-input"
+        id="api-url-input"
+        placeholder="Masukkan api URL baru"
+        value="<?php echo $url_api ?>"
+        class="form-control" style="margin-top: 10px;" />
+      <button type="submit" id="update-api-url-btn" class="btn btn-danger" style="margin-top: 10px;">Perbarui</button>
     </form>
   </div>
 </div>
@@ -62,61 +142,6 @@ if ($result && $result->num_rows > 0) {
 
 <script>
   const apiUrl = "<?php echo $apiUrl; ?>"; // Gunakan URL API yang diambil dari database
-  // Ambil data webhook dari API
-  fetch(apiUrl + "/webhook-url")
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("webhook-url-input").value = data.url;
-      document.getElementById("web-url-input").value = data.web_url;
-    })
-    .catch((error) => console.error("Error fetching webhook data:", error));
-
-  document
-    .getElementById("update-webhook-url-btn")
-    .addEventListener("click", () => {
-      const webhookUrl = document.getElementById("webhook-url-input").value;
-      if (webhookUrl) {
-        fetch(apiUrl + "/update-webhook-url", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              url: webhookUrl
-            }),
-          })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status) {
-              Swal.fire({
-                icon: "success",
-                title: "Berhasil",
-                text: "URL webhook berhasil diperbarui.",
-              });
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Gagal",
-                text: data.message,
-              });
-            }
-          })
-          .catch((error) => {
-            console.error("Error updating webhook URL:", error);
-            Swal.fire({
-              icon: "error",
-              title: "Gagal",
-              text: "Terjadi kesalahan saat memperbarui URL webhook.",
-            });
-          });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Gagal",
-          text: "URL tidak valid.",
-        });
-      }
-    });
 
   document.getElementById("hamburger").addEventListener("click", () => {
     const sidebar = document.getElementById("sidebar");
