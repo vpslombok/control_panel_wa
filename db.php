@@ -1,15 +1,15 @@
 <?php
 // Koneksi database mysql online
-// $host = 'bdeaoblcrmhzuzixz9lu-mysql.services.clever-cloud.com'; // Ganti dengan IP server MySQL
-// $user = 'uaihieeeuy2yjzsi'; // Ganti dengan username MySQL Anda
-// $password = 'aVw6FpQ2JcmOlbvLGWgt'; // Ganti dengan password MySQL Anda
-// $dbname = 'bdeaoblcrmhzuzixz9lu';
+$host = 'bdeaoblcrmhzuzixz9lu-mysql.services.clever-cloud.com'; // Ganti dengan IP server MySQL
+$user = 'uaihieeeuy2yjzsi'; // Ganti dengan username MySQL Anda
+$password = 'aVw6FpQ2JcmOlbvLGWgt'; // Ganti dengan password MySQL Anda
+$dbname = 'bdeaoblcrmhzuzixz9lu';
 
 // koneksi database localhost
-$host = 'localhost'; // Ganti dengan IP server MySQL
-$user = 'root'; // Ganti dengan username MySQL Anda
-$password = '123'; // Ganti dengan password MySQL Anda
-$dbname = 'whatsapp';
+// $host = 'localhost'; // Ganti dengan IP server MySQL
+// $user = 'root'; // Ganti dengan username MySQL Anda
+// $password = '123'; // Ganti dengan password MySQL Anda
+// $dbname = 'whatsapp';
 
 // koneksi database hosting
 // $host = 'sql106.infinityfree.com'; // Ganti dengan IP server MySQL
