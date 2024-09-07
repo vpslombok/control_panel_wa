@@ -1,78 +1,88 @@
 <?php
 include 'db.php';
 
-$query = "SELECT * FROM sent_messages";
-$result = mysqli_query($conn, $query);
+if (isset($_GET['action']) && $_GET['action'] == 'fetch') {
+    $query = "SELECT * FROM sent_messages ORDER BY id DESC";
+    $result = mysqli_query($conn, $query);
 
-// hapus data
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    if (mysqli_num_rows($result) > 0) {
+        $no = 1;
+        while ($riwayat = mysqli_fetch_array($result)) {
+            echo "<tr id='row-" . $riwayat['id'] . "'>";
+            echo "<td><input type='checkbox' name='checked[]' value='" . $riwayat['id'] . "'></td>";
+            echo "<td>" . $no++ . "</td>";
+            echo "<td>" . $riwayat['number'] . "</td>";
+            echo "<td>" . $riwayat['message_in'] . "</td>";
+            echo "<td>" . $riwayat['message'] . "</td>";
+            echo "<td>" . $riwayat['tanggal'] . "</td>";
+            echo "<td><button hx-delete='riwayat.php?action=delete&id=" . $riwayat['id'] . "' hx-target='#row-" . $riwayat['id'] . "' hx-swap='outerHTML' class='btn btn-danger'>Hapus</button></td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7'>Tidak ada data riwayat pesan.</td></tr>";
+    }
+    exit;
+}
+
+if (isset($_GET['action']) && $_GET['action'] == 'delete') {
+    $id = intval($_GET['id']);
     $query = "DELETE FROM sent_messages WHERE id = $id";
-    mysqli_query($conn, $query);
-    header('Location: riwayat.php');
+    if (mysqli_query($conn, $query)) {
+        echo "";  // Respon kosong untuk menghapus elemen dari DOM
+    } else {
+        echo "Gagal menghapus data";
+    }
+    exit;
 }
 
 // hapus data secara cepat menggunakan checkbox
-if (isset($_POST['hapus'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
     foreach ($_POST['checked'] as $id) {
-        $query = "DELETE FROM sent_messages WHERE id = $id";
+        $query = "DELETE FROM sent_messages WHERE id = " . intval($id);
         mysqli_query($conn, $query);
     }
-    header('Location: riwayat.php');
+    echo ""; // Pengosongan response untuk mencegah kesalahan pada HTMX.
+    exit;
 }
 ?>
 
-<?php
-include 'layout/header.php';
-?>
-
-<?php
-include 'layout/sidebar.php';
-?>
+<?php include 'layout/header.php'; ?>
+<?php include 'layout/sidebar.php'; ?>
 
 <div class="content">
     <div class="form-riwayat">
         <h2>Riwayat Pesan Terkirim</h2>
         <div class="table-responsive">
-            <form action="riwayat.php" method="post">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" id="selectAll"></th>
-                            <th>No</th>
-                            <th>Nomor Tujuan</th>
-                            <th>Pesan</th>
-                            <th>Tanggal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $no = 1;
-                        if (mysqli_num_rows($result) > 0) {
-                            while ($riwayat = mysqli_fetch_array($result)) {
-                                echo "<tr>";
-                                echo "<td><input type='checkbox' name='checked[]' value='" . $riwayat['id'] . "'></td>";
-                                echo "<td>" . $no++ . "</td>";
-                                echo "<td>" . $riwayat['number'] . "</td>";
-                                echo "<td>" . $riwayat['message'] . "</td>";
-                                echo "<td>" . $riwayat['tanggal'] . "</td>";
-                                echo "<td><a href='riwayat.php?id=" . $riwayat['id'] . "' class='btn btn-danger'>Hapus</a></td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6'>Tidak ada data riwayat pesan.</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-                <button type="submit" name="hapus" class="btn btn-primary">Hapus yang Dipilih</button>
-            </form>
+            <!-- Wrapper Flex -->
+            <div class="d-flex flex-column">
+                <!-- Baris Tombol Hapus -->
+                <form method="post">
+                    <button type="submit" name="hapus" class="btn btn-danger d-flex justify-content-end m-3" hx-post="riwayat.php" hx-target="#data-table" hx-swap="outerHTML">
+                        <i class="fa fa-trash"></i> Hapus
+                    </button>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>No</th>
+                                <th>Nomor Telpon</th>
+                                <th>Pesan Masuk</th>
+                                <th>Pesan Terkirim</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table" hx-get="riwayat.php?action=fetch" hx-trigger="load, every 5s">
+                            <!-- Data akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </form>
+
+            </div>
         </div>
     </div>
 </div>
 
-</body>
 <script>
     // Tambahkan fungsi untuk mengaktifkan dan menonaktifkan sidebar
     function toggleSidebar() {

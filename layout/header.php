@@ -16,9 +16,13 @@
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Tambahkan SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <!-- Tambahkan SweetAlert2 JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/htmx.org@1.9.19"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.js" integrity="sha384-yZq+5izaUBKcRgFbxgkRYwpHhHHCpp5nseXp0MEQ1A4MTWVMnqkmcuFez8x5qfxr" crossorigin="anonymous"></script>
   <style>
     body {
       background: rgb(200, 220, 224);
@@ -97,6 +101,7 @@
         margin-left: 250px;
       }
     }
+
     @media (max-width: 767px) {
       .hamburger {
         display: block;
@@ -136,6 +141,26 @@
       justify-content: center;
     }
 
+    .form-index {
+      width: 400px;
+      margin: 10px auto;
+      text-align: center;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: auto;
+      /* flex-direction: column;
+      align-items: center;
+      justify-content: center; */
+    }
+
+    .form-control {
+      width: 350px;
+    }
+
+
+
     .form-reply {
       width: 100%;
       margin: 10px auto;
@@ -154,6 +179,10 @@
       background: #ffffff;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      justify-content: left;
     }
 
     .form h1 {

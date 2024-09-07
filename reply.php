@@ -57,6 +57,7 @@ include 'layout/sidebar.php';
 
 <div class="content">
     <div class="form-reply">
+    <h2 style="font-weight: bold;">BALASAN OTOMATIS</h2>
         <div class="table-responsive">
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalTambah" style="margin-bottom: 10px; margin-top: 10px; margin-right: 85%; font-size: 15px;">
                 <i class="fas fa-plus"></i> Tambah Data

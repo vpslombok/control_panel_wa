@@ -43,7 +43,7 @@ function uploadFile($file)
       $fileExt = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
       $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
       if (in_array($fileExt, $allowedExt)) {
-        $newFileName = uniqid() . "." . $fileExt;
+        $newFileName = date('YmdHis') . "." . $fileExt;
         $fileDestination = $targetDir . $newFileName;
         move_uploaded_file($temp_name, $fileDestination);
         $_SESSION['message'] = "File berhasil diupload!";
@@ -113,8 +113,13 @@ $uploadedFiles = getUploadedFiles();
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://unpkg.com/htmx.org@1.9.19"></script>
+  <!-- Tambahkan SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <!-- Tambahkan SweetAlert2 JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.js" integrity="sha384-yZq+5izaUBKcRgFbxgkRYwpHhHHCpp5nseXp0MEQ1A4MTWVMnqkmcuFez8x5qfxr" crossorigin="anonymous"></script>
   <style>
     body {
       background: rgb(200, 220, 224);
@@ -333,6 +338,7 @@ $uploadedFiles = getUploadedFiles();
 <body>
   <?php include 'layout/sidebar.php'; ?>
 
+
   <div class="content">
     <div class="form">
       <h1>File Upload dan Management</h1>
@@ -368,14 +374,14 @@ $uploadedFiles = getUploadedFiles();
             <?php foreach ($uploadedFiles as $file): ?>
               <tr>
                 <td><?php echo $file; ?></td>
-                <td><?php echo filesize('./uploads/' . $file) . ' bytes'; ?></td>
+                <td><?php echo round(filesize('./uploads/' . $file) / 1024 / 1024, 2) . ' MB'; ?></td>
                 <td><?php echo pathinfo($file, PATHINFO_EXTENSION); ?></td>
                 <td><img src="./uploads/<?php echo $file; ?>" alt="<?php echo $file; ?>" onclick="window.open('./uploads/<?php echo $file; ?>', '_blank')"></td> <!-- Tambahkan onclick untuk membuka gambar dalam tab baru -->
                 <td>
                   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
                     <input type="hidden" name="deleteFile" value="<?php echo $file; ?>">
-                    <input type="submit" value="Hapus" class="btn btn-danger">
-                    <input type="button" value="Download" onclick="window.location.href='./uploads/<?php echo $file; ?>'" class="btn btn-primary">
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                    <a href="./uploads/<?php echo $file; ?>" download class="btn btn-warning"><i class="fas fa-download"></i></a>
                   </form>
                 </td>
               </tr>

@@ -8,36 +8,21 @@ $apiUrl = "";
 if ($result && $result->num_rows > 0) {
   $row = $result->fetch_assoc();
   $apiUrl = $row['web_url'];
-
-  // Dapatkan IP user
-  $userIP = $_SERVER['REMOTE_ADDR'];
-
-  // Dapatkan informasi lokasi user berdasarkan IP
-  $locationJson = file_get_contents("http://ipinfo.io/{$userIP}/json");
-  $locationData = json_decode($locationJson, true);
-
-  // Ekstrak latitude dan longitude dari data lokasi
-  if (isset($locationData['loc'])) {
-    list($latitude, $longitude) = explode(',', $locationData['loc']);
-
-    // Contoh penggunaan latitude dan longitude
-    echo "Latitude: $latitude<br>";
-    echo "Longitude: $longitude<br>";
-
-    // Simpan ke database jika perlu
-    $stmt = $conn->prepare("INSERT INTO user_access (ip, latitude, longitude, location) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $userIP, $latitude, $longitude, $locationJson);
-    $stmt->execute();
-
-    $stmt->close();
-  } else {
-    // echo "Lokasi tidak ditemukan.";
-  }
 }
+
+$query = "SELECT url_api FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
+$result = $conn->query($query);
+
+$urlapi = "";
+if ($result && $result->num_rows > 0) {
+  $row = $result->fetch_assoc();
+  $urlapi = $row['url_api'];
+}
+
+
 ?>
 <?php include 'layout/header.php'; ?>
 <?php include 'layout/sidebar.php'; ?>
-
 
 <div class="content">
   <div class="form">
@@ -61,9 +46,9 @@ if ($result && $result->num_rows > 0) {
   </div>
 </div>
 
-
 <script>
   const apiUrl = "<?php echo $apiUrl; ?>";
+  const urlapi = "<?php echo $urlapi; ?>";
 
   function updateSignalBar(status) {
     const bars = Array.from(document.getElementsByClassName("signal-bar"));
@@ -74,6 +59,28 @@ if ($result && $result->num_rows > 0) {
         bar.style.backgroundColor = "gray";
       }
     });
+  }
+
+  function sendLocationToServer(latitude, longitude, locationName, update_at) {
+    fetch(urlapi + "/api/update-location.php", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latitude: latitude,
+          longitude: longitude,
+          locationName: locationName,
+          update_at: update_at
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Location data sent successfully:', data);
+      })
+      .catch(error => {
+        console.error('Error sending location data:', error);
+      });
   }
 
   setInterval(() => {
@@ -120,12 +127,38 @@ if ($result && $result->num_rows > 0) {
         document.getElementById("connection-status").style.color = "red";
         updateSignalBar(0); // Set bar sinyal ke 0 jika tidak ada koneksi
       });
-  }, 1000); // Memanggil API setiap 1 detik
 
+    // Ambil lokasi pengguna dan nama lokasi berdasarkan kordinat
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const update_at = new Date().toISOString();
+        // Menggunakan API Geocoding dari OpenStreetMap untuk mendapatkan nama lokasi berdasarkan kordinat
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+          .then(response => response.json())
+          .then(data => {
+            const locationName = data.display_name; // Mendapatkan nama lokasi dari API
+            sendLocationToServer(latitude, longitude, locationName);
+          })
+          .catch(error => {
+            console.error("Error getting location name:", error);
+          });
+      }, (error) => {
+        console.error("Error getting location:", error);
+        // Jika GPS tidak diaktifkan, maka jangan beri akses
+        if (error.code === 1) {
+          alert("GPS tidak diaktifkan. Silakan aktifkan GPS untuk menggunakan fitur ini.");
+        }
+      });
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, 10000); // Memanggil API setiap 10 detik
+</script>
 
-
-
-  // Event listener untuk tombol logout
+<!-- Event listener untuk tombol logout -->
+<script>
   document.getElementById("logout-btn").addEventListener("click", () => {
     fetch(apiUrl + "/logout", {
         method: "POST",
@@ -146,6 +179,7 @@ if ($result && $result->num_rows > 0) {
         console.error("Error logging out:", error);
       });
   });
+
   // Event listener untuk hamburger
   document.getElementById("hamburger").addEventListener("click", () => {
     const sidebar = document.getElementById("sidebar");
@@ -179,7 +213,6 @@ if ($result && $result->num_rows > 0) {
     }
   });
 </script>
-<!-- <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.js" integrity="sha384-yZq+5izaUBKcRgFbxgkRYwpHhHHCpp5nseXp0MEQ1A4MTWVMnqkmcuFez8x5qfxr" crossorigin="anonymous"></script> -->
 </body>
 
 </html>
