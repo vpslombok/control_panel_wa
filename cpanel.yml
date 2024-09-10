@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/public_html/wa.sasak.xyz
+    - cp -r * $DEPLOYPATH
