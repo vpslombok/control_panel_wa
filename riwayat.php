@@ -15,7 +15,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch') {
             echo "<td>" . $riwayat['message_in'] . "</td>";
             echo "<td>" . $riwayat['message'] . "</td>";
             echo "<td>" . $riwayat['tanggal'] . "</td>";
-            echo "<td><button hx-delete='riwayat.php?action=delete&id=" . $riwayat['id'] . "' hx-target='#row-" . $riwayat['id'] . "' hx-swap='outerHTML' class='btn btn-danger'>Hapus</button></td>";
+            echo "<td><button hx-get='riwayat.php?action=delete&id=" . $riwayat['id'] . "' hx-target='#row-" . $riwayat['id'] . "' hx-swap='outerHTML' class='btn btn-danger'>Hapus</button></td>";
             echo "</tr>";
         }
     } else {
@@ -28,11 +28,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete') {
     $id = intval($_GET['id']);
     $query = "DELETE FROM sent_messages WHERE id = $id";
     if (mysqli_query($conn, $query)) {
-        echo "";  // Respon kosong untuk menghapus elemen dari DOM
+        header('Location: riwayat.php?action=fetch');
+        exit;
     } else {
         echo "Gagal menghapus data";
     }
-    exit;
 }
 
 // hapus data secara cepat menggunakan checkbox
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
         $query = "DELETE FROM sent_messages WHERE id = " . intval($id);
         mysqli_query($conn, $query);
     }
-    echo ""; // Pengosongan response untuk mencegah kesalahan pada HTMX.
+    header('Location: riwayat.php?action=fetch');
     exit;
 }
 ?>
@@ -53,11 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
     <div class="form-riwayat">
         <h2>Riwayat Pesan Terkirim</h2>
         <div class="table-responsive">
-            <!-- Wrapper Flex -->
             <div class="d-flex flex-column">
-                <!-- Baris Tombol Hapus -->
                 <form method="post">
-                    <button type="submit" name="hapus" class="btn btn-danger d-flex justify-content-end m-3" hx-post="riwayat.php" hx-target="#data-table" hx-swap="outerHTML">
+                    <button type="submit" name="hapus" id="deleteButton" class="btn btn-danger d-flex justify-content-end m-3" hx-post="riwayat.php" hx-target="#data-table" hx-swap="outerHTML" disabled>
                         <i class="fa fa-trash"></i> Hapus
                     </button>
                     <table class="table table-bordered table-striped">
@@ -77,62 +75,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
                         </tbody>
                     </table>
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script>
-    // Tambahkan fungsi untuk mengaktifkan dan menonaktifkan sidebar
     function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
         const hamburger = document.getElementById("hamburger");
 
         sidebar.classList.toggle("active");
 
-        // Periksa apakah sidebar sedang aktif
         if (sidebar.classList.contains("active")) {
-            hamburger.style.display = "none"; // Sembunyikan hamburger
+            hamburger.style.display = "none";
         } else {
-            hamburger.style.display = "block"; // Tampilkan hamburger
+            hamburger.style.display = "block";
         }
     }
 
-    // Tambahkan event listener untuk hamburger
     document.getElementById("hamburger").addEventListener("click", toggleSidebar);
 
-    // Tambahkan event listener untuk klik di luar sidebar
     document.addEventListener("click", (event) => {
         const sidebar = document.getElementById("sidebar");
         const hamburger = document.getElementById("hamburger");
 
-        // Periksa apakah sidebar sedang aktif
         if (sidebar.classList.contains("active")) {
             const isClickInsideSidebar = sidebar.contains(event.target);
             const isClickHamburger = hamburger.contains(event.target);
 
-            // Jika klik di luar sidebar dan bukan di hamburger, tutup sidebar
             if (!isClickInsideSidebar && !isClickHamburger) {
                 sidebar.classList.remove("active");
-                hamburger.style.display = "block"; // Tampilkan kembali hamburger
+                hamburger.style.display = "block";
             }
         }
     });
 
-    // Tambahkan event listener untuk select all checkbox
+    function updateDeleteButtonState() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
+        const deleteButton = document.getElementById("deleteButton");
+        const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+        deleteButton.disabled = !anyChecked;
+    }
+
     document.getElementById("selectAll").addEventListener("click", function() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        if (this.checked) {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-        } else {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        }
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateDeleteButtonState();
     });
+
+    function attachCheckboxListeners() {
+        document.querySelectorAll('input[type="checkbox"]:not(#selectAll)').forEach(checkbox => {
+            checkbox.addEventListener("change", updateDeleteButtonState);
+        });
+    }
+
+    // Attach listeners when data is loaded or updated
+    document.getElementById("data-table").addEventListener("htmx:afterSettle", function() {
+        attachCheckboxListeners();
+        updateDeleteButtonState();
+    });
+
+    // Initialize listeners on page load
+    attachCheckboxListeners();
 </script>
 
 </html>

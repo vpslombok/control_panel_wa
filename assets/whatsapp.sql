@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 31 Agu 2024 pada 18.07
+-- Waktu pembuatan: 08 Sep 2024 pada 05.04
 -- Versi server: 8.0.30
 -- Versi PHP: 8.1.10
 
@@ -32,7 +32,7 @@ CREATE TABLE `reply` (
   `pesan_masuk` varchar(255) DEFAULT NULL,
   `pesan_keluar` varchar(255) DEFAULT NULL,
   `update_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data untuk tabel `reply`
@@ -53,17 +53,20 @@ INSERT INTO `reply` (`id`, `pesan_masuk`, `pesan_keluar`, `update_at`) VALUES
 CREATE TABLE `sent_messages` (
   `id` int NOT NULL,
   `number` varchar(225) DEFAULT NULL,
+  `message_in` varchar(225) DEFAULT NULL,
   `message` varchar(225) DEFAULT NULL,
-  `tanggal` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tanggal` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data untuk tabel `sent_messages`
 --
 
-INSERT INTO `sent_messages` (`id`, `number`, `message`, `tanggal`) VALUES
-(62, '6281918408597', 'Sekarang Jam, 01:52:29', '2024-09-01 01:52:29'),
-(63, '081918408597', 'ppppp', '2024-09-01 01:52:55');
+INSERT INTO `sent_messages` (`id`, `number`, `message_in`, `message`, `tanggal`) VALUES
+(107, '6281918408597', 'p', 'Selamat Malam *BAYU*, di WhatsApp Bot Pintar ketik *INFO* untuk Menggunakan Fitur Bot', '2024-09-03 18:29:25'),
+(108, '6281918408597', 'p', 'Selamat Malam *BAYU*, di WhatsApp Bot Pintar ketik *INFO* untuk Menggunakan Fitur Bot', '2024-09-03 18:43:25'),
+(109, '6281918408597', 'p', 'Selamat Malam *BAYU*, di WhatsApp Bot Pintar ketik *INFO* untuk Menggunakan Fitur Bot', '2024-09-03 18:56:32'),
+(110, '6281918408597', 'jam', 'Sekarang Jam, 18:57:46', '2024-09-03 18:57:46');
 
 -- --------------------------------------------------------
 
@@ -76,8 +79,9 @@ CREATE TABLE `user_access` (
   `ip` varchar(225) DEFAULT NULL,
   `latitude` varchar(225) DEFAULT NULL,
   `longitude` varchar(225) DEFAULT NULL,
-  `location` varchar(225) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `location` varchar(225) DEFAULT NULL,
+  `update_at` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -87,18 +91,18 @@ CREATE TABLE `user_access` (
 
 CREATE TABLE `webhook_urls` (
   `id` int NOT NULL,
-  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `web_url` varchar(255) DEFAULT NULL,
   `url_api` varchar(225) DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data untuk tabel `webhook_urls`
 --
 
 INSERT INTO `webhook_urls` (`id`, `url`, `web_url`, `url_api`, `updated_at`) VALUES
-(26, 'https://script.google.com/macros/s/AKfycbyeGJUX0GQm5_cBtvQsycKO5l774wsnKgg-fMzr8JBNBnCbmzf3JBhaOQxP84LrXDvV/exec', 'http://localhost:3100', 'http://localhost/control_panel_wa', '2024-08-31 17:31:03');
+(26, 'https://bayu', 'https://whtasapp-bot-production.up.railway.app', 'https://9cb7-43-229-254-83.ngrok-free.app/control_panel_wa', '2024-09-08 03:31:12');
 
 --
 -- Indexes for dumped tables
@@ -142,7 +146,7 @@ ALTER TABLE `reply`
 -- AUTO_INCREMENT untuk tabel `sent_messages`
 --
 ALTER TABLE `sent_messages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_access`

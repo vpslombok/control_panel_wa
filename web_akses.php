@@ -12,19 +12,19 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch') {
             echo "<td><input type='checkbox' name='checked[]' value='" . $riwayat['id'] . "'></td>";
             echo "<td>" . $no++ . "</td>";
             echo "<td>" . $riwayat['ip'] . "</td>";
-            echo "<td>" . $riwayat['latitude'] . "</td>";
-            echo "<td>" . $riwayat['longitude'] . "</td>";
             echo "<td>" . $riwayat['location'] . "</td>";
             echo "<td>" . $riwayat['update_at'] . "</td>";
-            echo "<td><button hx-delete='web_akses.php?action=delete&id=" . $riwayat['id'] . "' hx-target='#row-" . $riwayat['id'] . "' hx-swap='outerHTML' class='btn btn-danger'>Hapus</button></td>";
+            echo "<td><button hx-get='web_akses.php?action=delete&id=" . $riwayat['id'] . "' hx-target='#row-" . $riwayat['id'] . "' hx-swap='outerHTML' class='btn btn-danger'>Hapus</button></td>";
+            echo "<td><button type='button' class='btn btn-info' onclick='viewLocation(" . $riwayat['latitude'] . ", " . $riwayat['longitude'] . ", \"" . $riwayat['ip'] . "\")'>View</button></td>";
             echo "</tr>";
         }
     } else {
-        echo "<tr><td colspan='7'>Tidak ada data riwayat akses.</td></tr>";
+        echo "<td colspan='8'>Tidak ada data riwayat akses.</td>";
     }
     return;
 }
 
+// hapus data manual
 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
     $id = intval($_GET['id']);
     $query = "DELETE FROM user_access WHERE id = $id";
@@ -45,10 +45,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
     echo ""; // Pengosongan response untuk mencegah kesalahan pada HTMX.
     return;
 }
+
+
 ?>
+
 
 <?php include 'layout/header.php'; ?>
 <?php include 'layout/sidebar.php'; ?>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
 
 <div class="content">
     <div class="form-riwayat">
@@ -66,26 +106,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
                             <tr>
                                 <th><input type="checkbox" id="selectAll"></th>
                                 <th>No</th>
-                                <th>ip</th>
-                                <th>latitude</th>
-                                <th>longitude</th>
-                                <th>lokasi</th>
+                                <th>IP</th>
+                                <th>Lokasi</th>
                                 <th>Update</th>
                                 <th>Aksi</th>
+                                <th>View</th>
                             </tr>
                         </thead>
-                        <tbody id="data-table" hx-get="web_akses.php?action=fetch" hx-trigger="load, every 10s">
+                        <tbody id="data-table" hx-get="web_akses.php?action=fetch" hx-trigger="every 5s, load">
                             <!-- Data akan dimuat di sini -->
                         </tbody>
                     </table>
                 </form>
-
+            </div>
+            <div id="mapModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="map" style="width: 100%; height: 400px;"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    function viewLocation(latitude, longitude, ip) {
+        // Tampilkan modal
+        const modal = document.getElementById("mapModal");
+        modal.style.display = "block";
+
+        // Inisialisasi peta
+        const map = L.map('map').setView([latitude, longitude], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Tambahkan marker pada peta dan tampilkan IP di popup
+        L.marker([latitude, longitude]).addTo(map)
+            .bindPopup(`IP: ${ip}`)
+            .openPopup();
+    }
+
+    // Tutup modal ketika diklik di luar konten modal
+    window.onclick = function(event) {
+        const modal = document.getElementById("mapModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Tutup modal ketika tombol 'X' diklik
+    document.querySelector(".close").onclick = function() {
+        document.getElementById("mapModal").style.display = "none";
+    }
+
     // Tambahkan fungsi untuk mengaktifkan dan menonaktifkan sidebar
     function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
@@ -136,5 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
         }
     });
 </script>
+
 
 </html>

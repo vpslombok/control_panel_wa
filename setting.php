@@ -22,12 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['web-url-input'])) {
     $webUrl = $_POST['web-url-input'];
     if (empty($webUrl)) {
-      $responseMessage = 'URL harus diisi.';
+      $responseMessage = 'WEB URL harus diisi.';
       $alertType = 'error';
     } else {
       $query = "UPDATE webhook_urls SET web_url='$webUrl', updated_at=NOW() LIMIT 1";
       if ($conn->query($query) === TRUE) {
-        $responseMessage = 'URL web berhasil diperbarui.';
+        $responseMessage = 'WEB URL Berhasil diPerbarui.';
         $alertType = 'success';
       } else {
         $responseMessage = 'Gagal memperbarui URL web: ' . $conn->error;
@@ -72,16 +72,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Mengembalikan pesan untuk ditampilkan pada form menggunakan SweetAlert
   echo "<script>
-          Swal.fire({
-              title: '" . ($alertType === 'success' ? 'Berhasil' : 'Gagal') . "',
-              text: '$responseMessage',
-              icon: '$alertType',
-              confirmButtonText: 'OK',
-              customClass: {
-                  confirmButton: 'btn btn-danger'
-              }
-          });
-        </script>";
+Swal.fire({
+    title: '" . ($alertType === 'success' ? 'Berhasil' : 'Gagal') . "',
+    text: '$responseMessage',
+    icon: '$alertType',
+    confirmButtonText: 'OK',
+    customClass: {
+        confirmButton: 'btn btn-danger'
+    }
+}).then((result) => {
+    if (result.isConfirmed) {
+        location.reload();  // Reload halaman setelah alert di-klik
+    }
+});
+</script>";
   exit;
 }
 ?>
@@ -100,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         placeholder="Enter new webhook URL"
         value="<?php echo $url; ?>"
         class="form-control" style="margin-top: 10px;" />
-      <button type="submit" class="btn btn-danger" style="margin-top: 10px;">Perbarui</button>
+      <button type="submit" id="webhook-update-btn" class="btn btn-danger" style="margin-top: 10px;" disabled>Perbarui</button>
     </form>
     <div id="webhook-message"></div> <!-- Tempat untuk menampilkan pesan -->
   </div>
@@ -117,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         placeholder="Masukkan URL web baru"
         value="<?php echo $apiUrl; ?>"
         class="form-control" style="margin-top: 10px;" />
-      <button type="submit" class="btn btn-danger" style="margin-top: 10px;">Perbarui</button>
+      <button type="submit" id="web-url-update-btn" class="btn btn-danger" style="margin-top: 10px;" disabled>Perbarui</button>
     </form>
     <div id="web-url-message"></div> <!-- Tempat untuk menampilkan pesan -->
   </div>
@@ -134,11 +138,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         placeholder="Masukkan api URL baru"
         value="<?php echo $url_api ?>"
         class="form-control" style="margin-top: 10px;" />
-      <button type="submit" class="btn btn-danger" style="margin-top: 10px;">Perbarui</button>
+      <button type="submit" id="api-url-update-btn" class="btn btn-danger" style="margin-top: 10px;" disabled>Perbarui</button>
     </form>
     <div id="api-url-message"></div> <!-- Tempat untuk menampilkan pesan -->
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const webhookInput = document.getElementById('webhook-url-input');
+    const webhookUpdateBtn = document.getElementById('webhook-update-btn');
+    const initialWebhookUrl = webhookInput.value;
+
+    webhookInput.addEventListener('input', function() {
+      webhookUpdateBtn.disabled = webhookInput.value === initialWebhookUrl;
+    });
+
+    const webUrlInput = document.getElementById('web-url-input');
+    const webUrlUpdateBtn = document.getElementById('web-url-update-btn');
+    const initialWebUrl = webUrlInput.value;
+
+    webUrlInput.addEventListener('input', function() {
+      webUrlUpdateBtn.disabled = webUrlInput.value === initialWebUrl;
+    });
+
+    const apiUrlInput = document.getElementById('api-url-input');
+    const apiUrlUpdateBtn = document.getElementById('api-url-update-btn');
+    const initialApiUrl = apiUrlInput.value;
+
+    apiUrlInput.addEventListener('input', function() {
+      apiUrlUpdateBtn.disabled = apiUrlInput.value === initialApiUrl;
+    });
+  });
+</script>
+
 
 <script>
   const apiUrl = "<?php echo $apiUrl; ?>"; // Gunakan URL API yang diambil dari database

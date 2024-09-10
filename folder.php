@@ -337,6 +337,9 @@ $uploadedFiles = getUploadedFiles();
 
 <body>
   <?php include 'layout/sidebar.php'; ?>
+  <div class="hamburger" id="hamburger">
+    <i class="fas fa-bars"></i>
+  </div>
 
 
   <div class="content">
@@ -393,10 +396,41 @@ $uploadedFiles = getUploadedFiles();
   </div>
 
   <script>
-    function toggleSidebar() {
-      const sidebar = document.querySelector('.sidebar');
-      sidebar.classList.toggle('active');
+   // Tambahkan fungsi untuk mengaktifkan dan menonaktifkan sidebar
+   function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const hamburger = document.getElementById("hamburger");
+
+        sidebar.classList.toggle("active");
+
+        // Periksa apakah sidebar sedang aktif
+        if (sidebar.classList.contains("active")) {
+            hamburger.style.display = "none"; // Sembunyikan hamburger
+        } else {
+            hamburger.style.display = "block"; // Tampilkan hamburger
+        }
     }
+
+    // Tambahkan event listener untuk hamburger
+    document.getElementById("hamburger").addEventListener("click", toggleSidebar);
+
+    // Tambahkan event listener untuk klik di luar sidebar
+    document.addEventListener("click", (event) => {
+        const sidebar = document.getElementById("sidebar");
+        const hamburger = document.getElementById("hamburger");
+
+        // Periksa apakah sidebar sedang aktif
+        if (sidebar.classList.contains("active")) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickHamburger = hamburger.contains(event.target);
+
+            // Jika klik di luar sidebar dan bukan di hamburger, tutup sidebar
+            if (!isClickInsideSidebar && !isClickHamburger) {
+                sidebar.classList.remove("active");
+                hamburger.style.display = "block"; // Tampilkan kembali hamburger
+            }
+        }
+    });
   </script>
 </body>
 

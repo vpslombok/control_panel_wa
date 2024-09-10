@@ -4,12 +4,12 @@ include '../db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    if (isset($data['latitude']) && isset($data['longitude']) && isset($data['locationName']) && isset($data['update_at'])) {
+    if (isset($data['latitude']) && isset($data['longitude']) && isset($data['locationName'])) {
         $latitude = $data['latitude'];
         $longitude = $data['longitude'];
         $userIP = $_SERVER['REMOTE_ADDR'];
         $location = $data['locationName'];
-        $update_at = $data['update_at'];
+        $update_at = date('Y-m-d H:i:s');
 
         // Cek apakah userIP sudah ada dalam database
         $checkStmt = $conn->prepare("SELECT * FROM user_access WHERE ip = ?");

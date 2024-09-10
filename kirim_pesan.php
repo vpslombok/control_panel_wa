@@ -14,37 +14,91 @@ if ($result && $result->num_rows > 0) {
 
 <?php include 'layout/header.php'; ?>
 <?php include 'layout/sidebar.php'; ?>
+<style>
+  /* Chrome, Safari, Edge, Opera */
+  #nomor-input::-webkit-outer-spin-button,
+  #nomor-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  #nomor-input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .input-icon {
+    position: relative;
+    margin-top: 15px;
+  }
+
+  .input-icon i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-10%);
+    color: #000;
+  }
+
+  .input-icon input {
+    padding-left: 30px; /* Adjust padding to make space for the icon */
+  }
+</style>
 
 <div class="content">
   <div class="form">
     <h1>Kirim Pesan</h1>
-    <input
-      type="text"
-      id="pesan-input"
-      placeholder="Masukkan pesan"
-      class="form-control" style="margin-top: 20px;" />
-    <input
-      type="number"
-      id="nomor-input"
-      placeholder="Masukkan nomor tujuan"
-      class="form-control" style="margin-top: 20px;" />
-    <input
-      type="file"
-      id="file-input"
-      class="form-control" style="margin-top: 20px;" />
-    <button id="kirim-pesan-btn" class="btn btn-danger" style="margin-top: 20px;">
+    
+    <!-- Input dengan ikon pesan -->
+    <div class="input-icon">
+      <i class="fas fa-envelope"></i>
+      <input
+        type="text"
+        id="pesan-input"
+        placeholder="Masukkan pesan"
+        class="form-control" style="margin-top: 15px;" />
+    </div>
+    
+    <!-- Input dengan ikon telepon -->
+    <div class="input-icon">
+      <i class="fab fa-whatsapp"></i>
+      <input
+        type="number"
+        id="nomor-input"
+        placeholder="Masukkan nomor tujuan"
+        class="form-control" style="margin-top: 15px;" />
+    </div>
+    
+    <!-- Input file -->
+    <div class="input-icon">
+      <input
+        type="file"
+        id="file-input"
+        class="form-control" style="margin-top: 15px;" />
+    </div>
+    
+    <button id="kirim-pesan-btn" class="btn btn-danger" style="margin-top: 15px;" disabled>
       Kirim Pesan
     </button>
   </div>
 </div>
+
 
 <script>
   const pesanInput = document.getElementById("pesan-input");
   const nomorInput = document.getElementById("nomor-input");
   const fileInput = document.getElementById("file-input");
   const kirimPesanBtn = document.getElementById("kirim-pesan-btn");
- 
+
   const apiUrl = "<?php echo $apiUrl; ?>"; // Gunakan URL API yang diambil dari database
+
+  nomorInput.addEventListener("input", function() {
+    if (nomorInput.value) {
+      kirimPesanBtn.disabled = false;
+    } else {
+      kirimPesanBtn.disabled = true;
+    }
+  });
 
   async function kirimPesan() {
     const pesan = pesanInput.value;
