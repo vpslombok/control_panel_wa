@@ -1,5 +1,20 @@
 <?php
+session_start();
 include 'db.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit;
+}
+
+// Jika logout, hapus session
+if (isset($_GET['logout'])) {
+  session_unset();
+  session_destroy();
+  header("Location: login.php");
+  exit;
+}
 
 // Tambah data reply
 if (isset($_POST['submit_tambah'])) {

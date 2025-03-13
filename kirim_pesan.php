@@ -1,5 +1,20 @@
 <?php
+session_start();
 include 'db.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit;
+}
+
+// Jika logout, hapus session
+if (isset($_GET['logout'])) {
+  session_unset();
+  session_destroy();
+  header("Location: login.php");
+  exit;
+}
 
 // ambil data web_url terbaru berdasarkan updated_at dari table webhook_urls dan di web_url tidak null
 $query = "SELECT web_url FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
@@ -41,14 +56,15 @@ if ($result && $result->num_rows > 0) {
   }
 
   .input-icon input {
-    padding-left: 30px; /* Adjust padding to make space for the icon */
+    padding-left: 30px;
+    /* Adjust padding to make space for the icon */
   }
 </style>
 
 <div class="content">
   <div class="form">
     <h1>Kirim Pesan</h1>
-    
+
     <!-- Input dengan ikon pesan -->
     <div class="input-icon">
       <i class="fas fa-envelope"></i>
@@ -58,7 +74,7 @@ if ($result && $result->num_rows > 0) {
         placeholder="Masukkan pesan"
         class="form-control" style="margin-top: 15px;" />
     </div>
-    
+
     <!-- Input dengan ikon telepon -->
     <div class="input-icon">
       <i class="fab fa-whatsapp"></i>
@@ -68,7 +84,7 @@ if ($result && $result->num_rows > 0) {
         placeholder="Masukkan nomor tujuan"
         class="form-control" style="margin-top: 15px;" />
     </div>
-    
+
     <!-- Input file -->
     <div class="input-icon">
       <input
@@ -76,7 +92,7 @@ if ($result && $result->num_rows > 0) {
         id="file-input"
         class="form-control" style="margin-top: 15px;" />
     </div>
-    
+
     <button id="kirim-pesan-btn" class="btn btn-danger" style="margin-top: 15px;" disabled>
       Kirim Pesan
     </button>

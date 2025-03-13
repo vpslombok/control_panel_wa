@@ -11,12 +11,17 @@
 // $password = '123'; // Ganti dengan password MySQL Anda
 // $dbname = 'whatsapp';
 
+// // koneksi database hosting
+// $host = '127.0.0.1'; // Ganti dengan IP server MySQL
+// $user = 'sasak920_bayu'; // Ganti dengan username MySQL Anda
+// $password = 'b+4RL)Hiwh=Y'; // Ganti dengan password MySQL Anda
+// $dbname = 'sasak920_wa';
+
 // koneksi database hosting
 $host = '127.0.0.1'; // Ganti dengan IP server MySQL
-$user = 'sasak920_bayu'; // Ganti dengan username MySQL Anda
-$password = 'b+4RL)Hiwh=Y'; // Ganti dengan password MySQL Anda
-$dbname = 'sasak920_wa';
-
+$user = 'root'; // Ganti dengan username MySQL Anda
+$password = '123'; // Ganti dengan password MySQL Anda
+$dbname = 'whatsapp';
 
 
 // Membuat koneksi

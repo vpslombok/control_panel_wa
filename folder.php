@@ -1,6 +1,20 @@
 <?php
 include 'db.php';
-session_start(); // Mulai session
+session_start();
+
+// Cek apakah sudah login
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit;
+}
+
+// Jika logout, hapus session
+if (isset($_GET['logout'])) {
+  session_unset();
+  session_destroy();
+  header("Location: login.php");
+  exit;
+}
 
 // Ambil URL API dari database
 $query = "SELECT web_url FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";

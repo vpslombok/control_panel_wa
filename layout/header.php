@@ -145,6 +145,20 @@
       justify-content: center;
     }
 
+    .form-send{
+      max-width: 400px;
+      margin: 10px auto;
+      text-align: center;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
     .form-index {
       width: 400px;
       margin: 10px auto;

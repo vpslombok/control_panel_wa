@@ -1,5 +1,20 @@
 <?php
+session_start();
 include 'db.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit;
+}
+
+// Jika logout, hapus session
+if (isset($_GET['logout'])) {
+  session_unset();
+  session_destroy();
+  header("Location: login.php");
+  exit;
+}
 
 if (isset($_GET['action']) && $_GET['action'] == 'fetch') {
     $query = "SELECT * FROM sent_messages ORDER BY id DESC";

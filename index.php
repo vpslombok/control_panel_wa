@@ -1,5 +1,21 @@
 <?php
+session_start();
 include 'db.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit;
+}
+
+// Jika logout, hapus session
+if (isset($_GET['logout'])) {
+  session_unset();
+  session_destroy();
+  header("Location: login.php");
+  exit;
+}
+
 // Ambil URL API dari database
 $query = "SELECT web_url FROM webhook_urls ORDER BY updated_at DESC LIMIT 1";
 $result = $conn->query($query);
@@ -18,7 +34,6 @@ if ($result && $result->num_rows > 0) {
   $row = $result->fetch_assoc();
   $urlapi = $row['url_api'];
 }
-
 
 ?>
 <?php include 'layout/header.php'; ?>
@@ -128,32 +143,7 @@ if ($result && $result->num_rows > 0) {
         updateSignalBar(0); // Set bar sinyal ke 0 jika tidak ada koneksi
       });
 
-    // Ambil lokasi pengguna dan nama lokasi berdasarkan kordinat
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        const update_at = new Date().toISOString();
-        // Menggunakan API Geocoding dari OpenStreetMap untuk mendapatkan nama lokasi berdasarkan kordinat
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-          .then(response => response.json())
-          .then(data => {
-            const locationName = data.display_name; // Mendapatkan nama lokasi dari API
-            sendLocationToServer(latitude, longitude, locationName);
-          })
-          .catch(error => {
-            console.error("Error getting location name:", error);
-          });
-      }, (error) => {
-        console.error("Error getting location:", error);
-        // Jika GPS tidak diaktifkan, maka jangan beri akses
-        if (error.code === 1) {
-          alert("GPS tidak diaktifkan. Silakan aktifkan GPS untuk menggunakan fitur ini.");
-        }
-      });
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
+
   }, 10000); // Memanggil API setiap 10 detik
 </script>
 
