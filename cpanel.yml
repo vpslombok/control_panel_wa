@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/public_html/api.sasak.xyz/ 
+    - export DEPLOYPATH=/home/qlljlhql/api.sasak.xyz/
     - cp -r * $DEPLOYPATH
