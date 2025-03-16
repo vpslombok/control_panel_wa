@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Cek apakah sudah login
 if (!isset($_SESSION['username'])) {
@@ -62,12 +62,12 @@ $result = mysqli_query($conn, $query);
 
 <!-- header -->
 <?php
-include 'layout/header.php';
+include '../layout/header.php';
 ?>
 
 <!-- sidebar -->
 <?php
-include 'layout/sidebar.php';
+include '../layout/sidebar.php';
 ?>
 
 <div class="content">

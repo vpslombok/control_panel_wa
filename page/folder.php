@@ -1,5 +1,5 @@
 <?php
-include 'db.php';
+include '../db.php';
 session_start();
 
 // Cek apakah sudah login
@@ -29,16 +29,16 @@ if ($result && $result->num_rows > 0) {
 // Fungsi untuk mendapatkan file dalam folder upload
 function getUploadedFiles()
 {
-  $folderPath = './uploads/';
+  $folderPath = '../uploads/';
   $files = scandir($folderPath);
-  $files = array_diff($files, array('.', '..'));
+  $files = array_diff($files, array('.', '..', '.gitignore'));
   return $files;
 }
 
 // Fungsi untuk mengupload file ke folder upload
 function uploadFile($file)
 {
-  $targetDir = './uploads/';
+  $targetDir = '../uploads/';
   $file_name = $file['name'];
   $temp_name = $file['tmp_name'];
   $file_size = $file['size'];
@@ -57,7 +57,7 @@ function uploadFile($file)
       $fileExt = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
       $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
       if (in_array($fileExt, $allowedExt)) {
-        $newFileName = date('YmdHis') . "." . $fileExt;
+        $newFileName = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 4) . "." . $fileExt;
         $fileDestination = $targetDir . $newFileName;
         move_uploaded_file($temp_name, $fileDestination);
         $_SESSION['message'] = "File berhasil diupload!";
@@ -79,7 +79,7 @@ function uploadFile($file)
 // Fungsi untuk menghapus file dari folder upload
 function deleteFile($file)
 {
-  $filePath = './uploads/' . $file;
+  $filePath = '../uploads/' . $file;
   if (file_exists($filePath)) {
     unlink($filePath);
     $_SESSION['message'] = "File berhasil dihapus!";
@@ -257,7 +257,7 @@ $uploadedFiles = getUploadedFiles();
     .form .loading {
       width: 250px;
       height: 250px;
-      background: url("./assets/loader.gif") no-repeat center;
+      background: url("../assets/loader.gif") no-repeat center;
       background-size: contain;
       margin-top: 20px;
     }
@@ -350,7 +350,7 @@ $uploadedFiles = getUploadedFiles();
 </head>
 
 <body>
-  <?php include 'layout/sidebar.php'; ?>
+  <?php include '../layout/sidebar.php'; ?>
   <div class="hamburger" id="hamburger">
     <i class="fas fa-bars"></i>
   </div>
@@ -391,9 +391,9 @@ $uploadedFiles = getUploadedFiles();
             <?php foreach ($uploadedFiles as $file): ?>
               <tr>
                 <td><?php echo $file; ?></td>
-                <td><?php echo round(filesize('./uploads/' . $file) / 1024 / 1024, 2) . ' MB'; ?></td>
+                <td><?php echo round(filesize('../uploads/' . $file) / 1024 / 1024, 2) . ' MB'; ?></td>
                 <td><?php echo pathinfo($file, PATHINFO_EXTENSION); ?></td>
-                <td><img src="./uploads/<?php echo $file; ?>" alt="<?php echo $file; ?>" onclick="window.open('./uploads/<?php echo $file; ?>', '_blank')"></td> <!-- Tambahkan onclick untuk membuka gambar dalam tab baru -->
+                <td><img src="../uploads/<?php echo $file; ?>" alt="<?php echo $file; ?>" onclick="window.open('../uploads/<?php echo $file; ?>', '_blank')"></td> <!-- Tambahkan onclick untuk membuka gambar dalam tab baru -->
                 <td>
                   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="display:inline;">
                     <input type="hidden" name="deleteFile" value="<?php echo $file; ?>">

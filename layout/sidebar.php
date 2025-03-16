@@ -1,18 +1,30 @@
-<div class="sidebar" id="sidebar">
-    <h2>LOMBOK SERVER</h2>
-    <ul>
-        <li><a href="/"><i class="fas fa-home"></i> Beranda</a></li>
-        <li><a href="kirim_pesan.php"><i class="fas fa-envelope"></i> Kirim Pesan</a></li>
-        <li><a href="riwayat.php"><i class="fas fa-history"></i> Riwayat Kirim</a></li>
-        <li><a href="reply.php"><i class="fas fa-reply"></i> Pesan Auto Reply</a></li>
-        <li><a href="setting.php"><i class="fas fa-cog"></i> Server Setting</a></li>
-        <li><a href="web_akses.php"><i class="fas fa-users"></i> Web Akses</a></li>
-        <li><a href="folder.php"><i class="fas fa-folder"></i> Folder</a></li> <!-- Menu baru -->
-    </ul>
+<?php
+// Pastikan base URL disesuaikan dengan struktur proyek
+define("BASE_URL", "/"); // Sesuaikan jika ada subfolder, misal: "/control_panel_wa/"
 
-    <br>
-    <a href="logout.php" id="logout-session" class="btn btn-danger">Logout</a>
-    <br>
-    <p style="text-align: center; font-size: 12px; margin-top: 10px;">Copyright © 2024 BAYU</p>
-    <p style="text-align: center; font-size: 12px; margin-top: 10px;">Version 24.08.30</p>
+// Ambil nama halaman saat ini tanpa folder
+$current_page = basename($_SERVER['SCRIPT_NAME']);
+?>
+
+<div class="sidebar" id="sidebar">
+        <h2>LOMBOK SERVER</h2>
+        <ul>
+                <li><a href="<?= BASE_URL; ?>" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
+                                <i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="<?= BASE_URL; ?>page/kirim_pesan.php" class="<?= $current_page == 'kirim_pesan.php' ? 'active' : '' ?>">
+                                <i class="fas fa-envelope"></i> Kirim Pesan</a></li>
+                <li><a href="<?= BASE_URL; ?>page/riwayat.php" class="<?= $current_page == 'riwayat.php' ? 'active' : '' ?>">
+                                <i class="fas fa-history"></i> Riwayat Kirim</a></li>
+                <li><a href="<?= BASE_URL; ?>page/reply.php" class="<?= $current_page == 'reply.php' ? 'active' : '' ?>">
+                                <i class="fas fa-reply"></i> Pesan Auto Reply</a></li>
+                <li><a href="<?= BASE_URL; ?>page/setting.php" class="<?= $current_page == 'setting.php' ? 'active' : '' ?>">
+                                <i class="fas fa-cog"></i> Pengaturan Server</a></li>
+                <li><a href="<?= BASE_URL; ?>page/web_akses.php" class="<?= $current_page == 'web_akses.php' ? 'active' : '' ?>">
+                                <i class="fas fa-users"></i> Akses Web</a></li>
+                <li><a href="<?= BASE_URL; ?>page/folder.php" class="<?= $current_page == 'folder.php' ? 'active' : '' ?>">
+                                <i class="fas fa-folder"></i> Folder</a></li>
+        </ul>
+
+        <p style="font-size: 14px; color: #fff; margin-top: 20px;">Version 13.03.25 <i class="fas fa-info-circle"></i></p>
+        <a href="<?= BASE_URL; ?>logout.php" id="logout-session" class="btn btn-danger w-100">Keluar</a>
 </div>

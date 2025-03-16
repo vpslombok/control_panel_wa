@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Cek apakah sudah login
 if (!isset($_SESSION['username'])) {
@@ -104,12 +104,12 @@ Swal.fire({
 }
 ?>
 
-<?php include 'layout/header.php'; ?>
-<?php include 'layout/sidebar.php'; ?>
+<?php include '../layout/header.php'; ?>
+<?php include '../layout/sidebar.php'; ?>
 
 <div class="form-index">
   <div class="form webhook">
-    <h1>Update Webhook URL</h1>
+    <h1>Webhook URL</h1>
     <form hx-post="setting.php" hx-target="#webhook-message" hx-swap="innerHTML">
       <input
         type="url"

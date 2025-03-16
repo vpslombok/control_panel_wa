@@ -17,102 +17,96 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
-    <title>Login Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MyApp</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: linear-gradient(to right, #4CAF50, #2E8B57);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        form {
-            width: 500px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
         }
-        label, input {
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-weight: bold;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
-        input[type="text"], input[type="password"] {
-            width: 90%;
-            height: 40px;
+
+        .input-group input {
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        input[type="submit"] {
-            background-color: #4caf50;
+
+        .login-btn {
+            background-color: #4CAF50;
             color: white;
-            padding: 15px 20px;
             border: none;
+            padding: 12px;
+            width: 100%;
             border-radius: 5px;
             cursor: pointer;
-            width: 100%;
+            font-size: 16px;
+            transition: 0.3s;
         }
-        input[type="submit"]:hover {
+
+        .login-btn:hover {
             background-color: #45a049;
         }
-    </style>
-    <script>
-        // tambahkan kode javascript di sini
-        console.log("Halaman login");
-    </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
-        form {
-            width: 500px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        label, input {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="text"], input[type="password"] {
-            width: 90%;
-            height: 40px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="submit"] {
-            background-color: #4caf50;
-            color: white;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+
+        .error-msg {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Masukkan username">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Masukkan password">
-        <input type="submit" value="Login">
-    </form>
-    <div style="color: red; text-align: center; margin-top: 10px;">
-        <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && $result && $result->num_rows == 0) {
-            echo "Username atau Password salah";
-        }
-        ?>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="login.php" method="POST">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <?php if (isset($_GET['error'])) { ?>
+            <p class="error-msg">Username atau Password salah</p>
+        <?php } ?>
     </div>
 </body>
+
 </html>

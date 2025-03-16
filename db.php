@@ -1,36 +1,22 @@
 <?php
-// Koneksi database mysql online
-// $host = 'bdeaoblcrmhzuzixz9lu-mysql.services.clever-cloud.com'; // Ganti dengan IP server MySQL
-// $user = 'uaihieeeuy2yjzsi'; // Ganti dengan username MySQL Anda
-// $password = 'aVw6FpQ2JcmOlbvLGWgt'; // Ganti dengan password MySQL Anda
-// $dbname = 'bdeaoblcrmhzuzixz9lu';
 
-// koneksi database localhost
-// $host = 'localhost'; // Ganti dengan IP server MySQL
-// $user = 'root'; // Ganti dengan username MySQL Anda
-// $password = '123'; // Ganti dengan password MySQL Anda
-// $dbname = 'whatsapp';
+// Pastikan file .env ada di direktori yang sama dengan db.php
+$env = parse_ini_file(__DIR__ . '/.env');
 
-// // koneksi database hosting
-// $host = '127.0.0.1'; // Ganti dengan IP server MySQL
-// $user = 'sasak920_bayu'; // Ganti dengan username MySQL Anda
-// $password = 'b+4RL)Hiwh=Y'; // Ganti dengan password MySQL Anda
-// $dbname = 'sasak920_wa';
-
-// koneksi database hosting
-$host = '127.0.0.1'; // Ganti dengan IP server MySQL
-$user = 'root'; // Ganti dengan username MySQL Anda
-$password = '123'; // Ganti dengan password MySQL Anda
-$dbname = 'whatsapp';
-
+$host = $env['DB_HOST']; // IP server MySQL dari .env
+$user = $env['DB_USER']; // Username MySQL dari .env
+$password = $env['DB_PASSWORD']; // Password MySQL dari .env
+$dbname = $env['DB_NAME']; // Nama database dari .env
 
 // Membuat koneksi
 $conn = new mysqli($host, $user, $password, $dbname);
 
-// Mengatur zona waktu
-date_default_timezone_set('Asia/Singapore');
+// Mengatur zona waktu dari .env
+date_default_timezone_set($env['TIME_ZONE']);
 
 // Memeriksa koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
+
+

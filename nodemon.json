@@ -1,0 +1,12 @@
+{
+    "watch": [ "server.js", "src/" ],
+    "ext": "js,json",
+    "ignore": [ "node_modules/" ],
+    "exec": "node server.js",
+    "restartable": "rs",
+    "delay": "1000",
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+  

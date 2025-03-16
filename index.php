@@ -159,7 +159,7 @@ if ($result && $result->num_rows > 0) {
       .then((response) => response.json())
       .then((data) => {
         if (data.status) {
-          console.log(data.message);
+          alert(data.message);
           // Tambahkan kode untuk mengarahkan ke halaman login atau tindakan lain setelah logout
         } else {
           console.error(data.message);

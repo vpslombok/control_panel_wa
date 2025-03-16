@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Cek apakah sudah login
 if (!isset($_SESSION['username'])) {
@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
 
 ?>
 
-<?php include 'layout/header.php'; ?>
-<?php include 'layout/sidebar.php'; ?>
+<?php include '../layout/header.php'; ?>
+<?php include '../layout/sidebar.php'; ?>
 
 <style>
     /* Modal Styles */
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
                         hx-swap="outerHTML"
                         disabled
                         id="deleteButton">
-                        <i class="fa fa-trash"></i> Hps
+                        <i class="fa fa-trash"></i> Hapus
                     </button>
                     <table class="table table-bordered table-striped">
                         <thead>

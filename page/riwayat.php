@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Cek apakah sudah login
 if (!isset($_SESSION['username'])) {
@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus'])) {
 }
 ?>
 
-<?php include 'layout/header.php'; ?>
-<?php include 'layout/sidebar.php'; ?>
+<?php include '../layout/header.php'; ?>
+<?php include '../layout/sidebar.php'; ?>
 
 <div class="content">
     <div class="form-riwayat">

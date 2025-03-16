@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Cek apakah sudah login
 if (!isset($_SESSION['username'])) {
@@ -27,8 +27,8 @@ if ($result && $result->num_rows > 0) {
 }
 ?>
 
-<?php include 'layout/header.php'; ?>
-<?php include 'layout/sidebar.php'; ?>
+<?php include '../layout/header.php'; ?>
+<?php include '../layout/sidebar.php'; ?>
 <style>
   /* Chrome, Safari, Edge, Opera */
   #nomor-input::-webkit-outer-spin-button,
@@ -40,6 +40,7 @@ if ($result && $result->num_rows > 0) {
   /* Firefox */
   #nomor-input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
   }
 
   .input-icon {
@@ -133,7 +134,7 @@ if ($result && $result->num_rows > 0) {
       formData.append("message", pesan);
       formData.append("number", nomor);
       formData.append("file_dikirim", file); // Sesuaikan dengan contoh pada file_context_0
-      const response = await fetch(apiUrl + "/send-message", {
+      const response = await fetch(apiUrl + "/send-media", {
         method: "POST",
         body: formData,
       });
