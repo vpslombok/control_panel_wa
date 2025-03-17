@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 <div class="sidebar" id="sidebar">
         <h2>LOMBOK SERVER</h2>
         <ul>
-                <li><a href="<?= BASE_URL; ?>" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
+                <li><a href="<?= BASE_URL; ?>index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
                                 <i class="fas fa-home"></i> Beranda</a></li>
                 <li><a href="<?= BASE_URL; ?>page/kirim_pesan.php" class="<?= $current_page == 'kirim_pesan.php' ? 'active' : '' ?>">
                                 <i class="fas fa-envelope"></i> Kirim Pesan</a></li>
